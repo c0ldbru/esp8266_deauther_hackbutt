@@ -48,14 +48,23 @@ extern String right(String a, int len);
 extern String leftRight(String a, String b, int len);
 extern String replaceUtf8(String str, String r);
 
-const char D_INTRO_0[] PROGMEM = "ESP8266 Deauther";
-const char D_INTRO_1[] PROGMEM = "by @Spacehuhn";
-const char D_INTRO_2[] PROGMEM = DISPLAY_TEXT;
+const char D_INTRO_0[] PROGMEM = "HACKBUTT!";
+const char D_INTRO_1[] PROGMEM = "by rot13labs"; 
+const char D_INTRO_2[] PROGMEM = "Deauther firmware";
+const char D_INTRO_3[] PROGMEM = "by @Spacehuhn";
 const char D_RESETTING[] PROGMEM = "Resetting...";
-const char D_SCANNING_0[] PROGMEM = "> Scanning";
-const char D_SCANNING_1[] PROGMEM = "> Scanning.";
-const char D_SCANNING_2[] PROGMEM = "> Scanning..";
-const char D_SCANNING_3[] PROGMEM = "> Scanning...";
+const char D_SCANNING_S[] PROGMEM = "> Scanning...";
+const char D_SCANNING_C[] PROGMEM = "> sCanning...";
+const char D_SCANNING_A[] PROGMEM = "> scAnning...";
+const char D_SCANNING_N1[] PROGMEM = "> scaNning...";
+const char D_SCANNING_N2[] PROGMEM = "> scanNing...";
+const char D_SCANNING_I[] PROGMEM = "> scannIng...";
+const char D_SCANNING_N3[] PROGMEM = "> scanniNg...";
+const char D_SCANNING_G[] PROGMEM = "> scanninG...";
+const char D_SCANNING_B1[] PROGMEM = "> scanning*..";
+const char D_SCANNING_B2[] PROGMEM = "> scanning.*.";
+const char D_SCANNING_B3[] PROGMEM = "> scanning..*";
+const char D_SCANNING_B4[] PROGMEM = "> scanning...";
 
 struct MenuNode {
     std::function<String()>getStr; // function used to create the displayed string
@@ -76,8 +85,8 @@ enum class DISPLAY_MODE { OFF,
                           LOADSCAN,
                           PACKETMONITOR,
                           INTRO,
-                          CLOCK,
-                          CLOCK_DISPLAY,
+                          BLING,
+                          BLING_DISPLAY,
                           RESETTING };
 
 class DisplayUI {
@@ -157,7 +166,7 @@ class DisplayUI {
         Menu scanMenu;
         Menu showMenu;
         Menu attackMenu;
-        Menu clockMenu;
+        Menu blingMenu;
 
         Menu apListMenu;
         Menu stationListMenu;
@@ -195,7 +204,7 @@ class DisplayUI {
         void addMenuNode(Menu* menu, const char* ptr, Menu* next);
 
         // fake clock
-        void drawClock();
+        void drawBling();
         void setTime(int h, int m, int s);
 
         int clockHour   = 6;

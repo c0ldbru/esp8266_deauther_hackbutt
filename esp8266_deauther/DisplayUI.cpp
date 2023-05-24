@@ -1,7 +1,7 @@
 /* This software is licensed under the MIT License: https://github.com/spacehuhntech/esp8266_deauther */
 
 #include "DisplayUI.h"
-
+#include "Images.h"
 #include "settings.h"
 
 // ===== adjustable ===== //
@@ -87,7 +87,7 @@ void DisplayUI::setup() {
             scan.start(SCAN_MODE_SNIFFER, 0, SCAN_MODE_OFF, 0, false, wifi_channel);
             mode = DISPLAY_MODE::PACKETMONITOR;
         });
-        addMenuNode(&mainMenu, D_CLOCK, &clockMenu); // CLOCK
+        addMenuNode(&mainMenu, D_BLING, &blingMenu); // BLING
 
 #ifdef HIGHLIGHT_LED
         addMenuNode(&mainMenu, D_LED, [this]() {     // LED
@@ -441,15 +441,15 @@ void DisplayUI::setup() {
         });
     });
 
-    // CLOCK MENU
-    createMenu(&clockMenu, &mainMenu, [this]() {
-        addMenuNode(&clockMenu, D_CLOCK_DISPLAY, [this]() { // CLOCK
-            mode = DISPLAY_MODE::CLOCK_DISPLAY;
+    // BLING MENU
+    createMenu(&blingMenu, &mainMenu, [this]() {
+        addMenuNode(&blingMenu, D_BLING_DISPLAY, [this]() { // BLING
+            mode = DISPLAY_MODE::BLING_DISPLAY;
             display.setFont(ArialMT_Plain_24);
             display.setTextAlignment(TEXT_ALIGN_CENTER);
         });
-        addMenuNode(&clockMenu, D_CLOCK_SET, [this]() { // CLOCK SET TIME
-            mode = DISPLAY_MODE::CLOCK;
+        addMenuNode(&blingMenu, D_BLING_SET, [this]() { // SET BLING
+            mode = DISPLAY_MODE::BLING;
             display.setFont(ArialMT_Plain_24);
             display.setTextAlignment(TEXT_ALIGN_CENTER);
         });
@@ -532,8 +532,8 @@ void DisplayUI::setupButtons() {
                 else currentMenu->selected = currentMenu->list->size() - 1;
             } else if (mode == DISPLAY_MODE::PACKETMONITOR) { // when in packet monitor, change channel
                 scan.setChannel(wifi_channel + 1);
-            } else if (mode == DISPLAY_MODE::CLOCK) {         // when in clock, change time
-                setTime(clockHour, clockMinute + 1, clockSecond);
+            } else if (mode == DISPLAY_MODE::BLING) {         // when in bling, change bling
+                // setTime(clockHour, clockMinute + 1, clockSecond);
             }
         }
     });
@@ -548,8 +548,8 @@ void DisplayUI::setupButtons() {
                 else currentMenu->selected = currentMenu->list->size() - 1;
             } else if (mode == DISPLAY_MODE::PACKETMONITOR) { // when in packet monitor, change channel
                 scan.setChannel(wifi_channel + 1);
-            } else if (mode == DISPLAY_MODE::CLOCK) {         // when in clock, change time
-                setTime(clockHour, clockMinute + 10, clockSecond);
+            } else if (mode == DISPLAY_MODE::BLING) {         // when in bling, change bling
+                // setTime(clockHour, clockMinute + 10, clockSecond);
             }
         }
     }, buttonDelay);
@@ -565,8 +565,8 @@ void DisplayUI::setupButtons() {
                 else currentMenu->selected = 0;
             } else if (mode == DISPLAY_MODE::PACKETMONITOR) { // when in packet monitor, change channel
                 scan.setChannel(wifi_channel - 1);
-            } else if (mode == DISPLAY_MODE::CLOCK) {         // when in clock, change time
-                setTime(clockHour, clockMinute - 1, clockSecond);
+            } else if (mode == DISPLAY_MODE::BLING) {         // when in bling, change bling
+                // setTime(clockHour, clockMinute - 1, clockSecond);
             }
         }
     });
@@ -583,8 +583,8 @@ void DisplayUI::setupButtons() {
                 scan.setChannel(wifi_channel - 1);
             }
 
-            else if (mode == DISPLAY_MODE::CLOCK) {           // when in clock, change time
-                setTime(clockHour, clockMinute - 10, clockSecond);
+            else if (mode == DISPLAY_MODE::BLING) {           // when in bling, change bling
+                // setTime(clockHour, clockMinute - 10, clockSecond);
             }
         }
     }, buttonDelay);
@@ -609,8 +609,8 @@ void DisplayUI::setupButtons() {
                     mode = DISPLAY_MODE::MENU;
                     break;
 
-                case DISPLAY_MODE::CLOCK:
-                case DISPLAY_MODE::CLOCK_DISPLAY:
+                case DISPLAY_MODE::BLING:
+                case DISPLAY_MODE::BLING_DISPLAY:
                     mode = DISPLAY_MODE::MENU;
                     display.setFont(DejaVu_Sans_Mono_12);
                     display.setTextAlignment(TEXT_ALIGN_LEFT);
@@ -649,7 +649,7 @@ void DisplayUI::setupButtons() {
                     mode = DISPLAY_MODE::MENU;
                     break;
 
-                case DISPLAY_MODE::CLOCK:
+                case DISPLAY_MODE::BLING:
                     mode = DISPLAY_MODE::MENU;
                     display.setFont(DejaVu_Sans_Mono_12);
                     display.setTextAlignment(TEXT_ALIGN_LEFT);
@@ -708,9 +708,9 @@ void DisplayUI::draw(bool force) {
                 }
                 drawIntro();
                 break;
-            case DISPLAY_MODE::CLOCK:
-            case DISPLAY_MODE::CLOCK_DISPLAY:
-                drawClock();
+            case DISPLAY_MODE::BLING:
+            case DISPLAY_MODE::BLING_DISPLAY:
+                drawBling();
                 break;
             case DISPLAY_MODE::RESETTING:
                 drawResetting();
@@ -808,23 +808,25 @@ void DisplayUI::drawIntro() {
     drawString(0, center(str(D_INTRO_0), maxLen));
     drawString(1, center(str(D_INTRO_1), maxLen));
     drawString(2, center(str(D_INTRO_2), maxLen));
-    drawString(3, center(DEAUTHER_VERSION, maxLen));
+    drawString(3, center(str(D_INTRO_3), maxLen));
     if (scan.isScanning()) {
-        if (currentTime - startTime >= screenIntroTime+4500) drawString(4, left(str(D_SCANNING_3), maxLen));
-        else if (currentTime - startTime >= screenIntroTime+3000) drawString(4, left(str(D_SCANNING_2), maxLen));
-        else if (currentTime - startTime >= screenIntroTime+1500) drawString(4, left(str(D_SCANNING_1), maxLen));
-        else if (currentTime - startTime >= screenIntroTime) drawString(4, left(str(D_SCANNING_0), maxLen));
+        if (currentTime - startTime >= screenIntroTime+4400) drawString(4, left(str(D_SCANNING_B4), maxLen));
+        else if (currentTime - startTime >= screenIntroTime+4000) drawString(4, left(str(D_SCANNING_B3), maxLen));
+        else if (currentTime - startTime >= screenIntroTime+3600) drawString(4, left(str(D_SCANNING_B2), maxLen));
+        else if (currentTime - startTime >= screenIntroTime+3200) drawString(4, left(str(D_SCANNING_B1), maxLen));
+        else if (currentTime - startTime >= screenIntroTime+2800) drawString(4, left(str(D_SCANNING_G), maxLen));
+        else if (currentTime - startTime >= screenIntroTime+2400) drawString(4, left(str(D_SCANNING_N3), maxLen));
+        else if (currentTime - startTime >= screenIntroTime+2000) drawString(4, left(str(D_SCANNING_I), maxLen));
+        else if (currentTime - startTime >= screenIntroTime+1600) drawString(4, left(str(D_SCANNING_N2), maxLen));
+        else if (currentTime - startTime >= screenIntroTime+1200) drawString(4, left(str(D_SCANNING_N1), maxLen));
+        else if (currentTime - startTime >= screenIntroTime+800) drawString(4, left(str(D_SCANNING_A), maxLen));
+        else if (currentTime - startTime >= screenIntroTime+400) drawString(4, left(str(D_SCANNING_C), maxLen));
+        else if (currentTime - startTime >= screenIntroTime) drawString(4, left(str(D_SCANNING_S), maxLen));
     }
 }
 
-void DisplayUI::drawClock() {
-    String clockTime = String(clockHour);
-
-    clockTime += ':';
-    if (clockMinute < 10) clockTime += '0';
-    clockTime += String(clockMinute);
-
-    display.drawString(64, 20, clockTime);
+void DisplayUI::drawBling() {
+    display.drawXbm(0, 0, hb_Logo_width, hb_Logo_height, hb_Logo_bits);
 }
 
 void DisplayUI::drawResetting() {

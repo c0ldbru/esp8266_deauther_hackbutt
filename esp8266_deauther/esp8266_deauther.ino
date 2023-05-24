@@ -31,7 +31,6 @@ extern "C" {
 #include "CLI.h"
 #include "DisplayUI.h"
 #include "A_config.h"
-
 #include "led.h"
 
 // Run-Time Variables //
