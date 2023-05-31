@@ -1,10 +1,24 @@
-# ESP8266 Deauther
+# HACKBUTT v3 - ESP8266 Deauther
 
 <img src='https://deauther.com/img/logo.png' alt='Deauther Logo' width='200' />
 
 **Scan for WiFi devices, block selected connections, create dozens of networks and confuse WiFi scanners.**
 
-## New Documentation
+## Hackbutt v3 Documentation
+
+Hackbutt v3 was created by [rot13labs](https://rot13labs.com) for security professionals to test their networks
+for wireless vulnerabilities. While its release coincides with DEFCON 31 please DO NOT use this badge at or
+around the casinos. They do not mess around when it comes to their security and creating issues for them could
+cause issues for DEFCON and/or for #badgelife, so DFIU!
+
+This badge was only made possible because of the incredible work done by [Spacehuhn Technologies](https://github.com/SpacehuhnTech) so if you enjoy this badge, please consider supporting them and the work they do for our community.
+
+## WebUI
+
+The password for the `hackbutt` wireless network is `rot13labs`. Once you log in, browse to 192.168.4.1 or go to 
+http://deauth.me to access the webUI. Hackbutt can be controlled via this webUI for easier management.
+
+## esp8266 deauther docs
 
 Hi 👋  
 Please visit [Deauther.com](https://deauther.com) for information about this project.  
@@ -15,10 +29,6 @@ Here are some quick links:
 * [DIY Tutorial](https://deauther.com/docs/category/diy-tutorial)
 * [Usage](https://deauther.com/docs/category/usage)
 * [FAQ](https://deauther.com/docs/faq)
-
-## Password
-
-The password for `pwned` is `deauther`
 
 ## About this Project
 
