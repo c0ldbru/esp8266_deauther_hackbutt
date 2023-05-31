@@ -3,6 +3,15 @@
 #include "DisplayUI.h"
 #include "Images.h"
 #include "settings.h"
+#include "A_config.h"
+#include "src/Adafruit_NeoPixel-1.7.0/Adafruit_NeoPixel.h"
+
+Adafruit_NeoPixel strip { LED_NUM, LED_NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800 };
+
+const uint8_t* image_pointer = hb_Logo_bits;
+int img = 3;
+int sleep = 0;
+int firstPixelHue;
 
 // ===== adjustable ===== //
 void DisplayUI::configInit() {
@@ -443,7 +452,7 @@ void DisplayUI::setup() {
 
     // BLING MENU
     createMenu(&blingMenu, &mainMenu, [this]() {
-        addMenuNode(&blingMenu, D_BLING_DISPLAY, [this]() { // BLING
+        addMenuNode(&blingMenu, D_BLING_DISPLAY, [this]() { // DISPLAY BLING
             mode = DISPLAY_MODE::BLING_DISPLAY;
             display.setFont(ArialMT_Plain_24);
             display.setTextAlignment(TEXT_ALIGN_CENTER);
@@ -533,7 +542,16 @@ void DisplayUI::setupButtons() {
             } else if (mode == DISPLAY_MODE::PACKETMONITOR) { // when in packet monitor, change channel
                 scan.setChannel(wifi_channel + 1);
             } else if (mode == DISPLAY_MODE::BLING) {         // when in bling, change bling
-                // setTime(clockHour, clockMinute + 1, clockSecond);
+                if (img == 1) {
+                    image_pointer = r13_Logo_bits;
+                    img = 2;
+                } else if (img == 2) {
+                    image_pointer = hb_Logo_bits;
+                    img = 3;
+                } else {
+                    image_pointer = butt_Logo_bits;
+                    img = 1;
+                }
             }
         }
     });
@@ -566,7 +584,16 @@ void DisplayUI::setupButtons() {
             } else if (mode == DISPLAY_MODE::PACKETMONITOR) { // when in packet monitor, change channel
                 scan.setChannel(wifi_channel - 1);
             } else if (mode == DISPLAY_MODE::BLING) {         // when in bling, change bling
-                // setTime(clockHour, clockMinute - 1, clockSecond);
+                if (img == 1) {
+                    image_pointer = r13_Logo_bits;
+                    img = 3;
+                } else if (img == 2) {
+                    image_pointer = hb_Logo_bits;
+                    img = 1;
+                } else {
+                    image_pointer = butt_Logo_bits;
+                    img = 2;
+                }
             }
         }
     });
@@ -584,7 +611,7 @@ void DisplayUI::setupButtons() {
             }
 
             else if (mode == DISPLAY_MODE::BLING) {           // when in bling, change bling
-                // setTime(clockHour, clockMinute - 10, clockSecond);
+                //
             }
         }
     }, buttonDelay);
@@ -650,6 +677,7 @@ void DisplayUI::setupButtons() {
                     break;
 
                 case DISPLAY_MODE::BLING:
+                case DISPLAY_MODE::BLING_DISPLAY:
                     mode = DISPLAY_MODE::MENU;
                     display.setFont(DejaVu_Sans_Mono_12);
                     display.setTextAlignment(TEXT_ALIGN_LEFT);
@@ -692,6 +720,37 @@ void DisplayUI::draw(bool force) {
 
             case DISPLAY_MODE::MENU:
                 drawMenu();
+                if (attack.isRunning()) {
+                  if (sleep > 15) {
+                    for (int x = 20; x < 255; x++) {
+                      strip.setBrightness(x);
+                      for (uint8_t i = 0; i < strip.numPixels(); i++) {
+                        strip.setPixelColor(i, strip.Color(255, 0, 0));
+                      }
+                      strip.show();
+                    }
+                    for (int x = 255; x >= 20; x--) {
+                      strip.setBrightness(x);
+                      for (uint8_t i = 0; i < strip.numPixels(); i++) {
+                        strip.setPixelColor(i, strip.Color(255, 0, 0));
+                      }
+                      strip.show();
+                    }
+                    sleep = 0;
+                  } else {
+                    for (size_t i = 0; i < strip.numPixels(); i++) {
+                      strip.setBrightness(20);
+                      strip.setPixelColor(i, 255, 0, 0);
+                    }
+                    sleep++;
+                  }
+                } else {
+                  for (size_t i = 0; i < strip.numPixels(); i++) {
+                    strip.setBrightness(20);
+                    strip.setPixelColor(i, 0, 255, 0);
+                  }
+                }
+                strip.show();
                 break;
 
             case DISPLAY_MODE::LOADSCAN:
@@ -711,6 +770,13 @@ void DisplayUI::draw(bool force) {
             case DISPLAY_MODE::BLING:
             case DISPLAY_MODE::BLING_DISPLAY:
                 drawBling();
+                for (size_t i = 0; i < strip.numPixels(); i++) {
+                  firstPixelHue += 256;
+                  int pixelHue = firstPixelHue + (i * 65536L / strip.numPixels());
+                  strip.setBrightness(20);
+                  strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue)));
+                }
+                strip.show();
                 break;
             case DISPLAY_MODE::RESETTING:
                 drawResetting();
@@ -826,7 +892,7 @@ void DisplayUI::drawIntro() {
 }
 
 void DisplayUI::drawBling() {
-    display.drawXbm(0, 0, hb_Logo_width, hb_Logo_height, hb_Logo_bits);
+    display.drawXbm(0, 0, hb_Logo_width, hb_Logo_height, image_pointer);
 }
 
 void DisplayUI::drawResetting() {
